@@ -337,10 +337,10 @@ This demonstrates that:
 
 # 🙌 Author
 
-**Somya Sahu**
-AI Developer | RL Systems 
-**Girish Bagdi** | 
-AI Developer  | 
-**Pawan Jogi** | 
-RL Systems  | 
+**Somya Sahu**-
+AI Developer,RL Systems|
+**Girish Bagdi**- 
+AI Developer |
+**Pawan Jogi** -
+RL Systems|
 ---
