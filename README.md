@@ -290,5 +290,4 @@ AI Developer | RL Systems
 AI Developer 
 **Pawan Jogi**
 RL Systems 
-Resercher
 ---
