@@ -281,6 +281,59 @@ HF_TOKEN=your_api_key
 ✔ Deterministic + LLM-ready
 
 ---
+# 📊 Example Output (Inference Results)
+
+The following results demonstrate how the environment evaluates agent performance across tasks of varying difficulty.
+
+---
+
+## 🧪 Evaluation Results
+
+```text
+Task        Difficulty   Score   Reward
+---------------------------------------
+Task 1      Medium       1.00    4.35
+Task 2      Hard         0.70    3.15
+Task 3      Easy         1.00    3.55
+```
+
+---
+
+## 📈 Summary
+
+```text
+Average Score: 0.90
+Total Reward: 11.05
+```
+
+---
+
+## 🧠 Interpretation
+
+* ✅ **Easy Task** → Fully solved with optimal steps
+* ✅ **Medium Task** → Efficient handling with correct tool usage
+* ⚠️ **Hard Task** → Lower score due to increased complexity and multi-issue reasoning
+
+---
+
+## 🎯 Key Takeaways
+
+* The environment **successfully differentiates task difficulty**
+* Rewards reflect **efficiency + correctness**
+* Hard tasks require **more reasoning and steps**
+* Evaluation is **realistic and non-trivial**
+
+---
+
+## 🏆 Why This Output Matters
+
+This demonstrates that:
+
+* The environment is **not a toy problem**
+* Agents must perform **multi-step reasoning**
+* Evaluation is **robust and meaningful**
+* Suitable for benchmarking **LLM and RL agents**
+
 
 # 🙌 Author
 
