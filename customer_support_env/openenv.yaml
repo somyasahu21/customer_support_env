@@ -1,5 +1,5 @@
 name: customer-support-openenv
-description: Advanced AI customer support environment with tools and multi-step reasoning
+description: Advanced AI customer support RL environment
 entrypoint: api.server:app
 
 tasks:
