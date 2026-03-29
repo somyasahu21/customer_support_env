@@ -339,8 +339,8 @@ This demonstrates that:
 
 **Somya Sahu**
 AI Developer | RL Systems 
-**Girish Bagdi**
-AI Developer 
-**Pawan Jogi**
-RL Systems 
+**Girish Bagdi** | 
+AI Developer  | 
+**Pawan Jogi** | 
+RL Systems  | 
 ---
