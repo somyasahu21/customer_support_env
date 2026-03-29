@@ -1,15 +1,12 @@
 """
-🚀 OpenEnv Final Inference Script (FULLY COMPLIANT)
+🚀 OpenEnv Final Inference Script 
 ==================================================
 
-✔ Uses OpenAI Client (REQUIRED)
-✔ Deterministic fallback (NO failure risk)
+✔ Uses OpenAI Client
+✔ Deterministic fallback 
 ✔ Fully reproducible
 ✔ Works with HF Space
 ✔ Handles all tasks
-✔ Judge-friendly logs
-
-Author: Somya Sahu
 """
 
 import os
