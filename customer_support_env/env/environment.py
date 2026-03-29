@@ -12,27 +12,42 @@ class CustomerSupportEnv:
 
     def reset(self):
         self.tasks = TASKS.copy()
-        self.current_task = self.tasks.pop(0)
+        self.current_task = random.choice(self.tasks)
+
         self.history = []
         self.tool_results = []
         self.step_count = 0
-        self.customer_satisfaction = 1.0
+
+        # NEW: richer state
+        self.customer_satisfaction = 0.8
+        self.resolved = False
+
         return self._get_obs()
 
     def step(self, action: Action):
         self.step_count += 1
         self.history.append(action.action_type)
 
+        # TOOL EXECUTION
         if action.action_type == "tool_call" and action.tool_call:
             tool = TOOLS.get(action.tool_call.tool_name)
             if tool:
                 result = tool(**action.tool_call.tool_input)
                 self.tool_results.append(result)
 
-        reward_value = compute_reward(self, action)
-        reward = Reward(value=reward_value, reason="computed")
+        # RESOLUTION LOGIC
+        if action.action_type == "resolve":
+            self.resolved = True
 
-        done = action.action_type in ["resolve", "escalate"] or self.step_count > 10
+        reward_value = compute_reward(self, action)
+        reward = Reward(value=reward_value, reason="dynamic")
+
+        # DONE CONDITIONS
+        done = (
+            self.resolved or
+            action.action_type == "escalate" or
+            self.step_count >= 12
+        )
 
         return self._get_obs(), reward, done, {}
 
@@ -41,7 +56,8 @@ class CustomerSupportEnv:
             "task": self.current_task,
             "history": self.history,
             "tool_results": self.tool_results,
-            "satisfaction": self.customer_satisfaction
+            "satisfaction": self.customer_satisfaction,
+            "resolved": self.resolved
         }
 
     def _get_obs(self):
@@ -49,7 +65,7 @@ class CustomerSupportEnv:
             ticket_id=self.current_task["id"],
             ticket_text=self.current_task["text"],
             priority=self.current_task.get("priority", "medium"),
-            sentiment="neutral",
+            sentiment=self.current_task.get("sentiment", "neutral"),
             history=self.history,
             tool_results=self.tool_results,
             step_count=self.step_count,
