@@ -3,6 +3,10 @@ def grade_episode(task, history, tool_results):
 
     score = 0.0
 
+    
+    # EXISTING LOGIC 
+   
+
     # Workflow correctness
     if "classify" in actions:
         score += 0.2
@@ -21,4 +25,26 @@ def grade_episode(task, history, tool_results):
     if "resolve" in actions:
         score += 0.2
 
-    return round(min(score, 1.0), 3)
+  
+
+    difficulty = task.get("difficulty", "easy")
+
+    if difficulty == "medium":
+        if len(tool_results) > 0:
+            score += 0.1
+
+    if difficulty == "hard":
+        # require more reasoning steps
+        if len(actions) >= task.get("optimal_steps", 5):
+            score += 0.2
+        else:
+            score -= 0.2   
+
+     
+        if len(actions) <= 4:
+            score -= 0.1
+  
+    # FINAL CLAMP 
+
+
+    return round(max(min(score, 1.0), 0.0), 3)
