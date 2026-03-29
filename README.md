@@ -1,7 +1,7 @@
 ---
 
 title: Customer Support OpenEnv
-emoji: 🤖
+emoji: "🤖"
 colorFrom: blue
 colorTo: purple
 sdk: docker
