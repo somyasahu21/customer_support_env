@@ -1,12 +1,14 @@
 """
-🚀 OpenEnv Final Inference Script 
+🚀 OpenEnv Final Inference Script (FULLY COMPLIANT)
 ==================================================
 
-✔ Uses OpenAI Client
-✔ Deterministic fallback 
+✔ Uses OpenAI Client (REQUIRED)
+✔ Deterministic fallback (NO failure risk)
 ✔ Fully reproducible
 ✔ Works with HF Space
 ✔ Handles all tasks
+
+Author: Somya Sahu
 """
 
 import os
@@ -15,7 +17,7 @@ import requests
 from typing import Dict, Any
 
 # ==============================
-# OPTIONAL LLM SUPPORT (MANDATORY REQUIREMENT)
+# OPTIONAL LLM SUPPORT 
 # ==============================
 
 USE_LLM = True
@@ -152,7 +154,6 @@ def llm_agent(obs: Dict[str, Any]) -> Dict[str, Any]:
         return {"action_type": action_type}
 
     except Exception:
-        # fallback safety
         return rule_based_agent(obs)
 
 
@@ -167,7 +168,7 @@ def get_action(obs):
 
 
 # ==============================
-# MAIN LOOP
+# MAIN LOOP 
 # ==============================
 
 def run_episode():
@@ -196,17 +197,51 @@ def run_episode():
     return total_reward
 
 
+# ==============================
+#  RUN ALL TASKS
+# ==============================
+
+def run_all_tasks():
+    results = []
+
+    for i in range(3):
+        print("\n" + "=" * 60)
+        print(f"🧪 RUNNING TASK {i+1}")
+        print("=" * 60)
+
+        total_reward = run_episode()
+
+        grader = requests.get(f"{ENV_API}/grader").json()
+        score = grader["score"]
+
+        log_final(score, total_reward)
+
+        results.append({
+            "task": i+1,
+            "score": score,
+            "reward": total_reward
+        })
+
+    return results
+
+
+# ==============================
+# sequentiall task
+# ==============================
+
 def main():
     log_header()
 
-    print("\n🚀 Starting Inference...\n")
+    print("\n🚀 Running All Tasks...\n")
 
-    total_reward = run_episode()
+    results = run_all_tasks()
 
-    grader = requests.get(f"{ENV_API}/grader").json()
-    score = grader["score"]
+    print("\n" + "=" * 60)
+    print("📊 FINAL SUMMARY")
+    print("=" * 60)
 
-    log_final(score, total_reward)
+    for r in results:
+        print(f"Task {r['task']} → Score: {r['score']} | Reward: {round(r['reward'], 2)}")
 
 
 # ==============================
