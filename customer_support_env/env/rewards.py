@@ -24,11 +24,36 @@ def compute_reward(env, action):
     elif action.action_type == "escalate":
         reward += 0.3
 
-  
+    # ==============================
+    # EXISTING LOGIC 
+    # ==============================
+
     reward += env.customer_satisfaction * 0.5
 
-   
     if len(env.history) > 2 and env.history[-1] == env.history[-2]:
         reward -= 0.2
+
+    # ==============================
+    # 🆕 DIFFICULTY-BASED REWARD 
+    # ==============================
+
+    difficulty = env.current_task.get("difficulty", "easy")
+
+    if difficulty == "easy":
+        reward += 0.0
+
+    elif difficulty == "medium":
+        reward += 0.2
+
+    elif difficulty == "hard":
+        reward += 0.4
+
+       
+        if env.step_count < 5:
+            reward -= 0.5
+
+    # ==============================
+    # FINAL CLAMP 
+    # ==============================
 
     return max(min(reward, 2.0), -1.0)
