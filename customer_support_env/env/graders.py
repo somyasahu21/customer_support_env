@@ -1,23 +1,24 @@
-def correct_tool_used(tool_results):
-    return any("Refund processed" in t for t in tool_results)
-
-def valid_sequence(history):
-    return "classify" in history and "respond" in history
-
 def grade_episode(task, history, tool_results):
+    actions = [str(h).lower() for h in history]
+
     score = 0.0
 
-    if task["requires_tool"]:
-        if correct_tool_used(tool_results):
-            score += 0.4
-
-    if valid_sequence(history):
-        score += 0.3
-
-    if len(history) <= task["optimal_steps"]:
+    # Workflow correctness
+    if "classify" in actions:
         score += 0.2
 
-    if "resolve" in history:
-        score += 0.1
+    if "respond" in actions:
+        score += 0.2
 
-    return min(score, 1.0)
+    if len(tool_results) > 0:
+        score += 0.2
+
+    # Efficiency bonus
+    if len(actions) <= task.get("optimal_steps", 5):
+        score += 0.2
+
+    # Resolution
+    if "resolve" in actions:
+        score += 0.2
+
+    return round(min(score, 1.0), 3)
