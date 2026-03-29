@@ -1,5 +1,4 @@
 ---
-
 title: Customer Support OpenEnv
 emoji: "🤖"
 colorFrom: blue
@@ -8,8 +7,8 @@ sdk: docker
 app_port: 7860
 pinned: false
 license: mit
-short_description: RL-based customer support simulation API
------------------------------------------------------------
+short_description: "RL-based customer support simulation API"
+---
 
 # 🤖 Customer Support OpenEnv Environment
 
