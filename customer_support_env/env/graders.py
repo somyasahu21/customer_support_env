@@ -51,7 +51,7 @@ def grade_episode(task, history, tool_results):
             score -= 0.1
 
     # ==============================
-    # FINAL CLAMP (IMPORTANT)
+    # FINAL CLAMP 
     # ==============================
 
     score = max(min(score, 1.0), 0.0)
