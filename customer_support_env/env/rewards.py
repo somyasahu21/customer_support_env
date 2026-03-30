@@ -34,7 +34,7 @@ def compute_reward(env, action):
         reward -= 0.2
 
     # ==============================
-    # 🆕 DIFFICULTY-BASED REWARD 
+    #  DIFFICULTY-BASED REWARD 
     # ==============================
 
     difficulty = env.current_task.get("difficulty", "easy")
