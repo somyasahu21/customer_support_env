@@ -17,7 +17,7 @@ class CustomerSupportEnv:
     def reset(self):
         self.tasks = TASKS.copy()
 
-        # ✅ SEQUENTIAL TASK SELECTION (IMPORTANT CHANGE)
+        #  SEQUENTIAL TASK SELECTION 
         self.current_task = self.tasks[self.task_index % len(self.tasks)]
         self.task_index += 1
 
@@ -35,21 +35,21 @@ class CustomerSupportEnv:
         self.step_count += 1
         self.history.append(action.action_type)
 
-        # TOOL EXECUTION (UNCHANGED)
+        # TOOL EXECUTION 
         if action.action_type == "tool_call" and action.tool_call:
             tool = TOOLS.get(action.tool_call.tool_name)
             if tool:
                 result = tool(**action.tool_call.tool_input)
                 self.tool_results.append(result)
 
-        # RESOLUTION LOGIC (UNCHANGED)
+        # RESOLUTION LOGIC 
         if action.action_type == "resolve":
             self.resolved = True
 
         reward_value = compute_reward(self, action)
         reward = Reward(value=reward_value, reason="dynamic")
 
-        # DONE CONDITIONS (UNCHANGED)
+        # DONE CONDITIONS 
         done = (
             self.resolved or
             action.action_type == "escalate" or
