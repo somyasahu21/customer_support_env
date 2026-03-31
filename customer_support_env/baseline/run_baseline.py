@@ -30,11 +30,11 @@ def run_baseline():
             )
 
         elif step == 3:
-            # ❗ IMPORTANT: do NOT resolve
+            
             action = Action(action_type="respond")
 
         elif step == 4:
-            # ❗ Sometimes escalate instead of resolve
+            
             action = Action(action_type="escalate")
 
         else:
