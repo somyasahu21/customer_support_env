@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Body
+from typing import Optional
+
 from env.environment import CustomerSupportEnv
 from env.graders import grade_episode
 from baseline.run_baseline import run_baseline
@@ -10,80 +12,133 @@ app = FastAPI(title="Customer Support OpenEnv API")
 env = CustomerSupportEnv()
 
 
+# ==============================
 # RESET ENDPOINT
-@app.get("/reset", response_model=Observation)
+# ==============================
+
+@app.post("/reset", response_model=Observation)
 def reset():
-    """
-    Resets the environment and returns the initial observation.
-    """
     return env.reset()
 
 
-# STEP ENDPOINT 
+@app.get("/reset")
+def reset_get():
+    try:
+        return env.reset()
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# ==============================
+# STEP ENDPOINT
+# ==============================
+
 @app.post("/step", response_model=StepResponse)
-def step(action: Action):
+def step(action: Optional[Action] = Body(default=None)):
     """
-    Takes an action and returns:
-    - observation
-    - reward
-    - done
-    - info
+    Safe step handler:
+    - Handles missing action (validation case)
+    - Prevents crash
     """
-    obs, reward, done, info = env.step(action)
 
-    return StepResponse(
-        observation=obs,
-        reward=reward,
-        done=done,
-        info=info
-    )
+    
+    if action is None:
+        return StepResponse(
+            observation=env.reset(),  # fallback
+            reward=0.0,
+            done=False,
+            info={"warning": "No action provided"}
+        )
+
+    try:
+        obs, reward, done, info = env.step(action)
+
+        return StepResponse(
+            observation=obs,
+            reward=float(reward),
+            done=bool(done),
+            info=info if info else {}
+        )
+
+    except Exception as e:
+        return StepResponse(
+            observation=env.reset(),
+            reward=0.0,
+            done=False,
+            info={"error": str(e)}
+        )
 
 
+
+@app.get("/step")
+def step_get():
+    return {
+        "message": "Use POST /step with JSON action payload"
+    }
+
+
+# ==============================
 # STATE ENDPOINT
+# ==============================
+
 @app.get("/state", response_model=dict)
 def state():
-    """
-    Returns the internal state of the environment.
-    """
-    return env.state()
+    try:
+        return env.state()
+    except Exception as e:
+        return {"error": str(e)}
 
 
-# TASKS ENDPOINT (WITH ACTION SCHEMA)
+# ==============================
+# TASKS ENDPOINT
+# ==============================
+
 @app.get("/tasks", response_model=dict)
 def tasks():
-    """
-    Returns available tasks and action schema.
-    """
     return {
         "tasks": ["easy", "medium", "hard"],
         "action_schema": Action.model_json_schema()
     }
 
 
+# ==============================
 # GRADER ENDPOINT
-@app.get("/grader", response_model=dict)
+# ==============================
+
+@app.post("/grader", response_model=dict)
 def grader():
-    """
-    Returns score (0.0 - 1.0) for current episode.
-    """
-    score = grade_episode(
-        env.current_task,
-        env.history,
-        env.tool_results
-    )
-    return {"score": float(score)}
+    try:
+        score = grade_episode(
+            env.current_task,
+            env.history,
+            env.tool_results
+        )
+        return {"score": float(score)}
+
+    except Exception as e:
+        return {"score": 0.0, "error": str(e)}
 
 
-# BASELINE ENDPOINT 
+# ==============================
+# BASELINE ENDPOINT
+# ==============================
+
 @app.get("/baseline")
 def baseline():
-    print("🤖 Running smart baseline...")
+    try:
+        print("🤖 Running smart baseline...")
+        score = run_baseline()
+        print(f"🎯 Score: {score}")
 
-    score = run_baseline()   
+        return {"score": float(score)}
 
-    print(f"🎯 Score: {score}")
+    except Exception as e:
+        return {"score": 0.0, "error": str(e)}
 
-    return {"score": float(score)}
+
+# ==============================
+# ROOT ENDPOINT
+# ==============================
 
 @app.get("/")
 def home():
@@ -91,11 +146,13 @@ def home():
         "message": "🚀 Customer Support OpenEnv API is running",
         "docs": "/docs",
         "endpoints": [
-            "/reset",
-            "/step",
-            "/state",
-            "/tasks",
-            "/grader",
-            "/baseline"
+            "GET /reset",
+            "POST /reset",
+            "GET /step",
+            "POST /step",
+            "GET /state",
+            "GET /tasks",
+            "POST /grader",
+            "GET /baseline"
         ]
     }
