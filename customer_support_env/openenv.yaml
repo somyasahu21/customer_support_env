@@ -1,8 +1,21 @@
 name: customer-support-openenv
-description: Advanced AI customer support RL environment
+description: RL-based customer support environment with multi-step reasoning
+
 entrypoint: api.server:app
 
 tasks:
-  - easy
-  - medium
-  - hard
+  - id: easy
+    description: Password reset request
+    difficulty: easy
+
+  - id: medium
+    description: Refund request
+    difficulty: medium
+
+  - id: hard
+    description: Multi-issue customer complaint
+    difficulty: hard
+
+grader:
+  type: episode
+  score_range: [0.0, 1.0]
