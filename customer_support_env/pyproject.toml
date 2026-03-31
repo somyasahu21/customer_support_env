@@ -1,0 +1,20 @@
+[project]
+name = "customer-support-openenv"
+version = "0.1.0"
+description = "RL-based customer support environment with multi-step reasoning"
+authors = [
+    { name="Somya Sahu" }
+]
+readme = "README.md"
+requires-python = ">=3.10"
+
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "requests",
+    "pydantic",
+    "openai"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
