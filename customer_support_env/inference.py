@@ -6,8 +6,11 @@ from openai import OpenAI
 # ==============================
 # ENV VARIABLES (FIXED FOR VALIDATOR)
 # ==============================
-API_BASE_URL = os.environ["API_BASE_URL"]   
-API_KEY = os.environ["API_KEY"]             
+API_BASE_URL = os.getenv("API_BASE_URL", "https://api.openai.com/v1")
+API_KEY = os.getenv("API_KEY")
+
+if not API_KEY:
+    raise ValueError("API_KEY is required")
 
 MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4o-mini")
 
