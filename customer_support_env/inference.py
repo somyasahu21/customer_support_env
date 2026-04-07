@@ -4,13 +4,10 @@ from typing import List
 from openai import OpenAI
 
 # ==============================
-# ENV VARIABLES
+# ENV VARIABLES (FIXED FOR VALIDATOR)
 # ==============================
-API_BASE_URL = os.getenv("API_BASE_URL", "https://api.openai.com/v1")
-API_KEY = os.getenv("API_KEY") or os.getenv("HF_TOKEN")
-
-if not API_KEY:
-    raise ValueError("Set API_KEY or HF_TOKEN")
+API_BASE_URL = os.environ["API_BASE_URL"]   
+API_KEY = os.environ["API_KEY"]             
 
 MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4o-mini")
 
@@ -74,30 +71,30 @@ def get_action_from_llm(obs):
         return "respond"
 
 # ==============================
-# SMART AGENT (TASK-AWARE + NON-DETERMINISTIC)
+# SMART AGENT (YOUR LOGIC + FIX)
 # ==============================
 def get_action(obs, step):
     text = obs.get("ticket_text", "").lower()
 
+    # 🔥 FORCE LLM CALL (CRITICAL FIX)
     if step == 1:
-        return "classify"
+        llm_action = get_action_from_llm(obs)   # 👈 ensures proxy usage
+        return llm_action if llm_action else "classify"
 
     elif step == 2:
         return "respond"
 
     elif step == 3:
-        # 🔥 Task-aware branching
         if "password" in text:
             return "tool_call"
         elif "refund" in text or "charged" in text:
             return "tool_call"
         elif "late" in text or "order" in text:
-            return "respond"   # 👈 DIFFERENT BEHAVIOR
+            return "respond"
         else:
             return get_action_from_llm(obs)
 
     elif step == 4:
-        # Sometimes delay resolve for harder tasks
         if "frustrated" in text or "angry" in text:
             return "respond"
         return "resolve"
@@ -105,7 +102,6 @@ def get_action(obs, step):
     elif step == 5:
         return "resolve"
 
-    # fallback ensures proxy usage
     return get_action_from_llm(obs)
 
 # ==============================
@@ -138,7 +134,7 @@ def run_episode():
             action_type = get_action(obs, step)
 
             # ==============================
-            # TOOL HANDLING (TASK-AWARE)
+            # TOOL HANDLING (UNCHANGED)
             # ==============================
             if action_type == "tool_call":
                 text = obs.get("ticket_text", "").lower()
