@@ -3,9 +3,31 @@ from env.logger import log_episode
 
 
 # ==============================
-# 🔥 HELPER (CRITICAL FIX)
+# BULLETPROOF NORMALIZATION 
 # ==============================
+def normalize_score(score):
+    score = float(score)
 
+    if score <= 0.0:
+        score = 0.001
+    elif score >= 1.0:
+        score = 0.999
+
+    #  prevent floating precision issues
+    score = round(score, 6)
+
+    #  strict safety (VERY IMPORTANT)
+    if score == 0.0:
+        score = 0.001
+    if score == 1.0:
+        score = 0.999
+
+    return score
+
+
+# ==============================
+# HELPER
+# ==============================
 def extract_actions(history):
     return [
         (h["action"] if isinstance(h, dict) else str(h)).lower()
@@ -14,7 +36,7 @@ def extract_actions(history):
 
 
 # ==============================
-# LEGACY RULE-BASED 
+# LEGACY RULE-BASED
 # ==============================
 
 def grade_password(task, history, tool_results):
@@ -35,7 +57,7 @@ def grade_password(task, history, tool_results):
     if actions[:4] == ["classify", "respond", "tool_call", "resolve"]:
         score += 0.1
 
-    return min(score, 1.0)
+    return normalize_score(score)
 
 
 def grade_refund(task, history, tool_results):
@@ -56,7 +78,7 @@ def grade_refund(task, history, tool_results):
     if actions[:4] == ["classify", "respond", "tool_call", "resolve"]:
         score += 0.1
 
-    return min(score, 1.0)
+    return normalize_score(score)
 
 
 def grade_multi_issue(task, history, tool_results):
@@ -80,7 +102,7 @@ def grade_multi_issue(task, history, tool_results):
     if "resolve" in actions:
         score += 0.2
 
-    return min(score, 1.0)
+    return normalize_score(score)
 
 
 # ==============================
@@ -103,11 +125,11 @@ def grade_fraud(task, history, tool_results):
     if actions[:4] == ["classify", "respond", "tool_call", "escalate"]:
         score += 0.2
 
-    return min(score, 1.0)
+    return normalize_score(score)
 
 
 # ==============================
-# FINAL HYBRID GRADER 
+# FINAL HYBRID GRADER
 # ==============================
 
 def grade_episode(task, history, tool_results):
@@ -127,17 +149,19 @@ def grade_episode(task, history, tool_results):
         rule_score = grade_fraud(task, history, tool_results)
 
     else:
-        rule_score = 0.0
+        rule_score = 0.001
+
 
     # ==============================
     # SEMANTIC SCORE
     # ==============================
     try:
         semantic_score = grade_semantic(task, history, tool_results)
-        semantic_score = float(min(max(semantic_score, 0.0), 1.0))
+        semantic_score = normalize_score(semantic_score)
 
     except Exception:
-        semantic_score = 0.3 + (0.4 * rule_score)
+        semantic_score = normalize_score(0.3 + (0.4 * rule_score))
+
 
     # ==============================
     # WRONG ACTION PENALTY
@@ -150,16 +174,25 @@ def grade_episode(task, history, tool_results):
     if any(a in actions for a in invalid_actions):
         penalty -= 0.2
 
+
     # ==============================
     # FINAL SCORE
     # ==============================
     final_score = (0.6 * semantic_score) + (0.4 * rule_score) + penalty
 
-    # 🔥 FINAL BOOST (CRITICAL)
+
+    # ==============================
+    # FINAL BOOST
+    # ==============================
     if "resolve" in actions or "escalate" in actions:
         final_score += 0.1
 
-    final_score = float(min(max(final_score, 0.0), 1.0))
+
+    # ==============================
+    #  FINAL SAFE NORMALIZATION
+    # ==============================
+    final_score = normalize_score(final_score)
+
 
     # ==============================
     # LOGGING
@@ -168,5 +201,8 @@ def grade_episode(task, history, tool_results):
         log_episode(task, history, final_score)
     except Exception:
         pass
+
+
+    print("FINAL SCORE:", final_score)
 
     return final_score
