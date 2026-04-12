@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+openenv-core
+numpy
+requests
+sentence-transformers
+scikit-learn
+torch
