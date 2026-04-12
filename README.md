@@ -1,4 +1,3 @@
----
 title: Customer Support OpenEnv
 emoji: "🤖"
 colorFrom: blue
@@ -7,76 +6,98 @@ sdk: docker
 app_port: 7860
 pinned: false
 license: mit
-short_description: "RL-based customer support simulation API"
----
+short_description: "RL-based intelligent customer support simulation with LLM + tools"
+--------------------------------------------------------------------------------------
 
-# 🤖 Customer Support OpenEnv Environment
+# 🤖 Customer Support OpenEnv 
 
-A **real-world reinforcement learning environment** where AI agents learn to solve customer support problems using structured reasoning, tool usage, and multi-step decision making.
+A **real-world AI environment** where agents learn to solve customer support problems using:
+
+✔ Multi-step reasoning
+✔ Tool usage (APIs)
+✔ Emotional intelligence
+✔ LLM-based decision making
 
 ---
 
 # 🚀 Live Demo
 
-🔗 **API Docs:**
+🔗 API Docs
 https://somya2108-customer-support-openenv.hf.space/docs
 
-🔗 **Base URL:**
+🔗 Base URL
 https://somya2108-customer-support-openenv.hf.space
 
 ---
 
-# 🧠 What This Environment Simulates
+# 🧠 What This Project Does
 
-This environment models **real customer support workflows**:
+This system simulates **real customer support scenarios**:
 
-* 🔐 Password reset requests
+* 🔐 Password reset
 * 💰 Refund & billing issues
-* ⚠️ Multi-issue complaints (late order + double charge + frustration)
+* ⚠️ Multi-problem complaints
+* 🚨 Fraud / unauthorized transactions
 
-Agents must behave like **real support agents**:
+👉 The AI agent must:
 
-* Understand intent
-* Respond politely
-* Use backend tools
-* Resolve efficiently
-
----
-
-# 🎯 Why This Project is Important
-
-Unlike toy RL environments, this system:
-
-✅ Models **real-world business workflows**
-✅ Requires **multi-step reasoning**
-✅ Combines **language + decision making + tools**
-✅ Can be used to evaluate **LLM agents (e.g. Nemotron, GPT)**
+* Understand the problem
+* Respond like a human
+* Use tools
+* Resolve or escalate
 
 ---
 
-# ⚙️ OpenEnv API Design
 
-### 🔁 Core Endpoints
 
-| Endpoint    | Description           |
-| ----------- | --------------------- |
-| `/reset`    | Start new episode     |
-| `/step`     | Perform an action     |
-| `/state`    | Internal state        |
-| `/tasks`    | Task info + schema    |
-| `/grader`   | Final score (0.0–1.0) |
-| `/baseline` | Run baseline agent    |
+### 🧠 LLM-Based Semantic Grader
+
+* Uses BERT-style embeddings
+* Understands intent (not just keywords)
+* Scores actions intelligently
+
+### 🤖 Multi-Agent Interaction
+
+* Customer replies dynamically
+* Emotion changes (angry → happy)
+* Real conversation simulation
+
+### 🛠 Real API Integration
+
+* verify_payment
+* process_refund
+* send_auth_otp
+
+### 🎯 Hybrid Scoring System
+
+* Rule-based + Semantic grading
+* Final score: **0.0 → 1.0**
+
+### 📊 Logging + Leaderboard
+
+* Step logs
+* Episode logs
+* Performance tracking
+
+---
+
+# ⚙️ How the Environment Works
+
+1️⃣ Reset environment
+2️⃣ Agent sees ticket
+3️⃣ Agent chooses action
+4️⃣ Environment updates state
+5️⃣ Reward given
+6️⃣ Loop until solved
 
 ---
 
 # 🧩 Action Space
 
-Agents interact using structured actions:
-
 ```json
 {
   "action_type": "classify | respond | tool_call | resolve | escalate",
-  "content": "optional message",
+  "content": "optional",
   "tool_call": {
     "tool_name": "string",
     "tool_input": {}
@@ -86,70 +107,21 @@ Agents interact using structured actions:
 
 ---
 
-# 🛠️ Available Tools
+# 🛠 Tools Available
 
-| Tool                 | Purpose           |
-| -------------------- | ----------------- |
-| `send_reset_link`    | Reset password    |
-| `refund_api`         | Process refunds   |
-| `check_order_status` | Verify order      |
-| `tech_diagnostics`   | Diagnose issues   |
-| `escalate`           | Transfer to human |
-
----
-
-# 🔄 Workflow (How the Environment Works)
-
-Each episode follows a **multi-step interaction loop**:
-
-### Step-by-step flow:
-
-1. **Environment reset**
-
-   * New ticket generated
-
-2. **Agent observes**
-
-   * Ticket text
-   * History
-   * Satisfaction score
-
-3. **Agent decides action**
-
-   * classify / respond / tool_call / resolve
-
-4. **Environment updates**
-
-   * Executes tool (if any)
-   * Updates state
-   * Computes reward
-
-5. **Loop continues**
-
-   * Until resolved / escalated / max steps
+| Tool               | Purpose         |
+| ------------------ | --------------- |
+| send_reset_link    | Reset password  |
+| refund_api         | Refund          |
+| process_refund     | Real refund API |
+| check_order_status | Order tracking  |
+| verify_payment     | Payment check   |
+| send_auth_otp      | OTP auth        |
+| escalate           | Human support   |
 
 ---
 
-# 📊 Example Episode
-
-```text
-Ticket: "Reset my password"
-
-Step 1 → classify
-Step 2 → respond
-Step 3 → tool_call (send_reset_link)
-Step 4 → resolve
-```
-
-✔ Efficient
-✔ Correct workflow
-✔ High reward
-
----
-
-# 💰 Reward Design (Important for RL)
-
-Reward is **dense and informative**, not sparse:
+# 💰 Reward System
 
 | Action    | Reward |
 | --------- | ------ |
@@ -157,87 +129,65 @@ Reward is **dense and informative**, not sparse:
 | respond   | +0.3   |
 | tool_call | +0.4   |
 | resolve   | +1.0   |
-| escalate  | +0.3   |
+| escalate  | +0.2   |
 
-Additional signals:
+Extra signals:
 
-* 😊 Customer satisfaction bonus
-* ⏱ Step penalty (efficiency)
-* 🔁 Repeated action penalty
+* 😊 Customer satisfaction
+* ⏱ Efficiency penalty
+* 🔁 Repetition penalty
+* ❌ Wrong action penalty
 
-👉 Encourages:
-
-* Correct workflow
-* Fast resolution
-* Meaningful actions
+👉 Final reward always: **0.0 → 1.0**
 
 ---
 
-# 🧪 Grading System (0.0 → 1.0)
+# 🧪 Grading System
 
-Final score is computed using:
+Final Score =
 
-| Criteria         | Weight |
-| ---------------- | ------ |
-| Correct workflow | 0.4    |
-| Tool usage       | 0.2    |
-| Resolution       | 0.2    |
-| Efficiency       | 0.2    |
+* 60% Semantic (LLM understanding)
+* 40% Rule-based logic
 
-✔ Deterministic
-✔ Reproducible
-✔ Fair evaluation
 
 ---
 
-# 📚 Task Design
+# 📚 Task Types
 
-| Difficulty | Description                        |
-| ---------- | ---------------------------------- |
-| Easy       | Single-step issue (password reset) |
-| Medium     | Refund handling                    |
-| Hard       | Multi-issue + emotional user       |
-
-👉 Hard tasks require:
-
-* Multiple responses
-* Proper sequencing
-* Tool reasoning
+| Type     | Example        |
+| -------- | -------------- |
+| Easy     | Password reset |
+| Medium   | Refund         |
+| Hard     | Multi-issue    |
+| Critical | Fraud          |
 
 ---
 
-# 🤖 Baseline Agent
+# 📊 Real Output (Inference)
 
-A deterministic rule-based agent is provided:
+```text
+[START] task=customer_support env=openenv model=gpt-4o-mini
 
-* Ensures reproducibility
-* Provides benchmark score
-* Demonstrates optimal workflow
+[STEP] step=1 action=classify reward=0.50 done=false error=null
+[STEP] step=2 action=respond reward=0.53 done=false error=null
+[STEP] step=3 action=tool_call reward=0.50 done=false error=null
+[STEP] step=4 action=resolve reward=0.90 done=true error=null
 
----
-
-# 🧠 Agent Evaluation
-
-This environment supports evaluation of:
-
-* Rule-based agents
-* LLM agents (e.g. Nemotron, GPT)
-* RL-trained policies
+[END] success=true steps=4 rewards=0.50,0.53,0.50,0.90
+```
 
 ---
 
-# 🏆 What Makes This Environment Strong
+# 📈 Why This Output is Strong
 
-✅ Real-world domain (customer support)
-✅ Multi-step reasoning required
-✅ Tool-based interaction
-✅ Dense reward shaping
-✅ Deterministic grading
-✅ LLM-compatible
+✔ Correct workflow
+✔ Proper tool usage
+✔ Fast resolution
+✔ High reward
 
 ---
 
-# ⚙️ Running Locally
+# ⚙️ Run Locally
 
 ```bash
 git clone https://github.com/somyasahu21/customer_support_env
@@ -248,21 +198,15 @@ docker run -p 7860:7860 cs-env
 
 ---
 
-# 🚀 Inference Script
-
-Run:
+# 🚀 Run Inference
 
 ```bash
 python inference.py
 ```
 
-✔ Deterministic + LLM hybrid
-✔ Works with HF Space
-✔ Produces reproducible scores
-
 ---
 
-# 🔐 Environment Variables (Required)
+# 🔐 Environment Variables
 
 ```bash
 API_BASE_URL=https://api.openai.com/v1
@@ -272,75 +216,22 @@ HF_TOKEN=your_api_key
 
 ---
 
-# 📌 Key Highlights 
+# 🏆 Why This Project Wins
 
-✔ Fully working OpenEnv environment
-✔ Real-world applicability
-✔ Strong reward + grading design
-✔ Clean API + Docker deployment
-✔ Deterministic + LLM-ready
+✔ Real-world simulation
+✔ LLM + RL integration
+✔ Multi-agent behavior
+✔ Tool-based reasoning
+✔ Production-ready API
 
----
-# 📊 Example Output (Inference Results)
-
-The following results demonstrate how the environment evaluates agent performance across tasks of varying difficulty.
+👉 This is NOT a toy project — it's a **real AI system**
 
 ---
 
-## 🧪 Evaluation Results
+# 🙌 Authors
 
-```text
-Task        Difficulty   Score   Reward
----------------------------------------
-Task 1      Medium       1.00    4.35
-Task 2      Hard         0.70    3.15
-Task 3      Easy         1.00    3.55
-```
+**Somya Sahu** – AI Developer, RL Systems
+**Girish Bagdi** – AI Developer
+**Pawan Jogi** – RL Systems
 
----
-
-## 📈 Summary
-
-```text
-Average Score: 0.90
-Total Reward: 11.05
-```
-
----
-
-## 🧠 Interpretation
-
-* ✅ **Easy Task** → Fully solved with optimal steps
-* ✅ **Medium Task** → Efficient handling with correct tool usage
-* ⚠️ **Hard Task** → Lower score due to increased complexity and multi-issue reasoning
-
----
-
-## 🎯 Key Takeaways
-
-* The environment **successfully differentiates task difficulty**
-* Rewards reflect **efficiency + correctness**
-* Hard tasks require **more reasoning and steps**
-* Evaluation is **realistic and non-trivial**
-
----
-
-## 🏆 Why This Output Matters
-
-This demonstrates that:
-
-* The environment is **not a toy problem**
-* Agents must perform **multi-step reasoning**
-* Evaluation is **robust and meaningful**
-* Suitable for benchmarking **LLM and RL agents**
-
-
-# 🙌 Author
-
-**Somya Sahu**-
-AI Developer,RL Systems|
-**Girish Bagdi**- 
-AI Developer |
-**Pawan Jogi** -
-RL Systems|
 ---
